@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Website Image Extractor</title>
+  <style>
+    .image-preview {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .image-preview img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      margin: 10px;
+      cursor: pointer;
+    }
+    
+    .selected {
+      border: 3px solid blue;
+    }
+  </style>
+</head>
+<body>
+  <h1>Website Image Extractor</h1>
+  
+  <label for="website-link">Website Link:</label>
+  <input type="text" id="website-link" placeholder="Paste website link here" />
+  <button onclick="extractImages()">Extract Images</button>
+  
+  <h2>Preview:</h2>
+  <div id="image-preview" class="image-preview"></div>
+  
+  <button onclick="downloadImages()">Download Selected Images</button>
+  
+  <script>
+    let imageUrls = [];
+    
+    function extractImages() {
+      const websiteLink = document.getElementById('website-link').value;
+      
+      // Send the websiteLink to the server using an AJAX request or fetch API
+      
+      // Upon receiving the response from the server, update the imageUrls array and call the displayImages() function
+      // For example:
+      imageUrls = ['image1.jpg', 'image2.jpg', 'image3.jpg'];
+      displayImages();
+    }
+    
+    function displayImages() {
+      const imagePreview = document.getElementById('image-preview');
+      imagePreview.innerHTML = '';
+      
+      for (let i = 0; i < imageUrls.length; i++) {
+        const imageUrl = imageUrls[i];
+        
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.onclick = function() {
+          toggleImageSelection(this);
+        };
+        
+        imagePreview.appendChild(img);
+      }
+    }
+    
+    function toggleImageSelection(image) {
+      image.classList.toggle('selected');
+    }
+    
+    function downloadImages() {
+      const selectedImages = document.getElementsByClassName('selected');
+      
+      // Prepare the selected image URLs to send to the server for downloading
+      
+      // Send the selected image URLs to the server using an AJAX request or fetch API
+      
+      // Upon receiving the response from the server, initiate the download process
+      // You can redirect the user to a download URL or use JavaScript to trigger the download
+    }
+  </script>
+</body>
+</html>
