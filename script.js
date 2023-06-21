@@ -1,63 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Website Image Extractor</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.0/css/bootstrap.min.css">
-  <style>
-    .image-preview {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    
-    .image-preview img {
-      width: 200px;
-      height: 200px;
-      object-fit: cover;
-      cursor: pointer;
-    }
-    
-    .selected {
-      border: 3px solid blue;
-    }
+function extractImages() {
+  const websiteLinkInput = document.getElementById('website-link');
+  const websiteLink = websiteLinkInput.value.trim();
 
-    .status-message {
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1 class="mt-5">Website Image Extractor</h1>
-  
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <label for="website-link" class="form-label">Website Link:</label>
-        <input type="url" id="website-link" class="form-control" placeholder="Paste website link here" required>
-      </div>
-      <div class="col-md-6">
-        <button onclick="extractImages()" class="btn btn-primary">Extract Images</button>
-      </div>
-    </div>
-  
-    <h2 class="mt-5">Preview:</h2>
-    <div id="image-preview" class="image-preview"></div>
-  
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <button onclick="downloadImages()" class="btn btn-success">Download Selected Images</button>
-      </div>
-      <div class="col-md-6">
-        <button onclick="selectAllImages()" class="btn btn-secondary me-2">Select All</button>
-        <button onclick="deselectAllImages()" class="btn btn-secondary">Deselect All</button>
-      </div>
-    </div>
+  if (!websiteLink) {
+    setStatusMessage('Please enter a valid website link.', 'error');
+    return;
+  }
 
-    <div id="status-box" class="status-message"></div>
-  </div>
-  
-  <script src="script.js"></script>
-</body>
-</html>
+  // Display status message
+  setStatusMessage(`Extracting images from ${websiteLink}...`);
+
+  // Simulating a delay to show the status message
+  setTimeout(() => {
+    // Simulated response from the server with image URLs
+    const imageUrls = ['image1.jpg', 'image2.jpg', 'image3.jpg'];
+
+    // Display status message
+    setStatusMessage(`Images extracted from ${websiteLink}.`, 'success');
+
+    displayImages(imageUrls);
+  }, 2000);
+}
+
+function displayImages(imageUrls) {
+  const imagePreview = document.getElementById('image-preview');
+  imagePreview.innerHTML = '';
+
+  for (let i = 0; i < imageUrls.length; i++) {
+    const imageUrl = imageUrls[i];
+
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.addEventListener('click', function() {
+      toggleImageSelection(this);
+    });
+
+    imagePreview.appendChild(img);
+  }
+
+  // Display status message
+  setStatusMessage(`${imageUrls.length} images displayed.
