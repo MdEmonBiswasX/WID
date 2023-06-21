@@ -34,51 +34,6 @@
   
   <button onclick="downloadImages()">Download Selected Images</button>
   
-  <script>
-    let imageUrls = [];
-    
-    function extractImages() {
-      const websiteLink = document.getElementById('website-link').value;
-      
-      // Send the websiteLink to the server using an AJAX request or fetch API
-      
-      // Upon receiving the response from the server, update the imageUrls array and call the displayImages() function
-      // For example:
-      imageUrls = ['image1.jpg', 'image2.jpg', 'image3.jpg'];
-      displayImages();
-    }
-    
-    function displayImages() {
-      const imagePreview = document.getElementById('image-preview');
-      imagePreview.innerHTML = '';
-      
-      for (let i = 0; i < imageUrls.length; i++) {
-        const imageUrl = imageUrls[i];
-        
-        const img = document.createElement('img');
-        img.src = imageUrl;
-        img.onclick = function() {
-          toggleImageSelection(this);
-        };
-        
-        imagePreview.appendChild(img);
-      }
-    }
-    
-    function toggleImageSelection(image) {
-      image.classList.toggle('selected');
-    }
-    
-    function downloadImages() {
-      const selectedImages = document.getElementsByClassName('selected');
-      
-      // Prepare the selected image URLs to send to the server for downloading
-      
-      // Send the selected image URLs to the server using an AJAX request or fetch API
-      
-      // Upon receiving the response from the server, initiate the download process
-      // You can redirect the user to a download URL or use JavaScript to trigger the download
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
