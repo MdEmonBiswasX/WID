@@ -1,63 +1,184 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Website Image Extractor</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.0/css/bootstrap.min.css">
-  <style>
-    .image-preview {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    
-    .image-preview img {
-      width: 200px;
-      height: 200px;
-      object-fit: cover;
-      cursor: pointer;
-    }
-    
-    .selected {
-      border: 3px solid blue;
-    }
-
-    .status-message {
-      margin-top: 20px;
-    }
-  </style>
+    <title>Guess the Number</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            margin-top: 100px;
+        }
+        .input-group {
+            margin-top: 20px;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .shake-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        p.result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .progress-bar {
+            margin: 20px auto;
+            width: 300px;
+            height: 20px;
+            background-color: #f2f2f2;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            width: 0%;
+            background-color: #4CAF50;
+            transition: width 0.3s ease-in-out;
+        }
+        p.stats {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        p.hint {
+            margin-top: 10px;
+            font-size: 16px;
+            font-style: italic;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1 class="mt-5">Website Image Extractor</h1>
-  
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <label for="website-link" class="form-label">Website Link:</label>
-        <input type="url" id="website-link" class="form-control" placeholder="Paste website link here" required>
-      </div>
-      <div class="col-md-6">
-        <button onclick="extractImages()" class="btn btn-primary">Extract Images</button>
-      </div>
-    </div>
-  
-    <h2 class="mt-5">Preview:</h2>
-    <div id="image-preview" class="image-preview"></div>
-  
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <button onclick="downloadImages()" class="btn btn-success">Download Selected Images</button>
-      </div>
-      <div class="col-md-6">
-        <button onclick="selectAllImages()" class="btn btn-secondary me-2">Select All</button>
-        <button onclick="deselectAllImages()" class="btn btn-secondary">Deselect All</button>
-      </div>
+    <div class="container">
+        <h1>Guess the Number</h1>
+        <p>Guess a number between 1 and 100:</p>
+        <div class="input-group">
+            <input type="number" id="guess" min="1" max="100" required>
+            <button onclick="checkGuess()">Check</button>
+        </div>
+        <p class="result" id="result"></p>
+        <div class="progress-bar">
+            <div class="progress-bar-inner" id="progress-bar-inner"></div>
+        </div>
+        <p class="stats" id="stats">Guesses: 0 | Time: 0s</p>
+        <button onclick="showHint()">Hint</button>
+        <p class="hint" id="hint"></p>
     </div>
 
-    <div id="status-box" class="status-message"></div>
-  </div>
-  
-  <script src="script.js"></script>
+    <audio id="correctSound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg"></audio>
+    <audio id="wrongSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+
+    <script>
+        // Generate a random number between 1 and 100
+        const randomNumber = Math.floor(Math.random() * 100) + 1;
+
+        let guessCount = 0;
+        let startTime = 0;
+        let timerInterval;
+
+        const guessInput = document.getElementById('guess');
+        const resultText = document.getElementById('result');
+        const progressBar = document.getElementById('progress-bar-inner');
+        const statsText = document.getElementById('stats');
+        const hintText = document.getElementById('hint');
+        const correctSound = document.getElementById('correctSound');
+        const wrongSound = document.getElementById('wrongSound');
+
+        function checkGuess() {
+            const guess = parseInt(guessInput.value);
+
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                resultText.textContent = 'Please enter a valid number between 1 and 100.';
+                guessInput.classList.remove('shake-animation');
+                guessInput.offsetWidth; // Trigger reflow to restart animation
+                guessInput.classList.add('shake-animation');
+                wrongSound.play();
+            } else if (guess === randomNumber) {
+                resultText.textContent = 'Congratulations! You guessed the correct number.';
+                resultText.style.color = '#4CAF50';
+                guessInput.disabled = true;
+                correctSound.play();
+                stopTimer();
+            } else if (guess < randomNumber) {
+                resultText.textContent = 'Too low! Try again.';
+                resultText.style.color = '#FF0000';
+                guessInput.classList.remove('shake-animation');
+                guessInput.offsetWidth; // Trigger reflow to restart animation
+                guessInput.classList.add('shake-animation');
+                wrongSound.play();
+            } else {
+                resultText.textContent = 'Too high! Try again.';
+                resultText.style.color = '#FF0000';
+                guessInput.classList.remove('shake-animation');
+                guessInput.offsetWidth; // Trigger reflow to restart animation
+                guessInput.classList.add('shake-animation');
+                wrongSound.play();
+            }
+
+            guessCount++;
+            guessInput.value = '';
+            guessInput.focus();
+            updateStats();
+
+            const accuracy = Math.abs(randomNumber - guess);
+            const progressPercentage = 100 - (accuracy / 100 * 100);
+            progressBar.style.width = progressPercentage + '%';
+            progressBar.style.backgroundColor = `hsl(${progressPercentage}, 100%, 50%)`;
+        }
+
+        function updateStats() {
+            statsText.textContent = `Guesses: ${guessCount} | Time: ${formatTime(getElapsedTime())}`;
+        }
+
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function updateTimer() {
+            const elapsedTime = getElapsedTime();
+            updateStats();
+        }
+
+        function getElapsedTime() {
+            return Math.floor((Date.now() - startTime) / 1000);
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        function showHint() {
+            const rangeStart = randomNumber - 10;
+            const rangeEnd = randomNumber + 10;
+            hintText.textContent = `Hint: The number is between ${rangeStart} and ${rangeEnd}.`;
+        }
+    </script>
 </body>
 </html>
